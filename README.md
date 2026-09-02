@@ -1,5 +1,9 @@
 # WIL_PROJECT
 
+Group : R
+
+Project: Real-Time Progress Monitoring System
+
 This project is about developing applications that enable teachers to upload a students marks on to the platform and allow parents to get real-time updates on the progress of their child's academic performance.
 The aim of the platform is to bridge the communication gap, where parents generally get mark updates through the quarterly reports provided by the school. 
 
