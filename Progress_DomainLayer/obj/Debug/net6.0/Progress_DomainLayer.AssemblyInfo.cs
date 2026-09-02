@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Progress_DomainLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c754d92f0498d47f5d24981008f736f92d0e51c7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a16c2f8f79ae319a1fc0c5ffd1553a5fa5d034f5")]
 [assembly: System.Reflection.AssemblyProductAttribute("Progress_DomainLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Progress_DomainLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
