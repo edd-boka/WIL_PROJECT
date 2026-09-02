@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Progress_RepositoryLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a16c2f8f79ae319a1fc0c5ffd1553a5fa5d034f5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cfe98bbe26c01414de3a33335f94d8e95b12039e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Progress_RepositoryLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Progress_RepositoryLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

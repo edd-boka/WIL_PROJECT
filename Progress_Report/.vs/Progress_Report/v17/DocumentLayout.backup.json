@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_Report\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{FD1E79B7-BA82-4DD2-A8E1-CF77F0A84A63}|..\\Progress_ServiceLayer\\Progress_ServiceLayer.csproj|c:\\users\\eddbo\\onedrive - central university of technology free state\\desktop\\wil_project\\progress_servicelayer\\customservices\\markservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FD1E79B7-BA82-4DD2-A8E1-CF77F0A84A63}|..\\Progress_ServiceLayer\\Progress_ServiceLayer.csproj|c:\\users\\eddbo\\onedrive - central university of technology free state\\desktop\\wil_project\\progress_servicelayer\\icustomservices\\icustomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{271FD3A6-8421-47CD-940B-A1ABA7B3F43B}|..\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj|c:\\users\\eddbo\\onedrive - central university of technology free state\\desktop\\wil_project\\progress_repositorylayer\\repository\\repository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{271FD3A6-8421-47CD-940B-A1ABA7B3F43B}|..\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj|c:\\users\\eddbo\\onedrive - central university of technology free state\\desktop\\wil_project\\progress_repositorylayer\\irepository\\irepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9C277BE2-FFDD-45FE-8938-46E143C74547}|..\\Progress_DomainLayer\\Progress_DomainLayer.csproj|c:\\users\\eddbo\\onedrive - central university of technology free state\\desktop\\wil_project\\progress_domainlayer\\migrations\\20260902090324_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -71,19 +83,69 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "20260902090324_InitialCreate.cs",
-              "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
-              "RelativeDocumentMoniker": "..\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
-              "ToolTip": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
-              "RelativeToolTip": "..\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "MarkService.cs",
+              "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\CustomServices\\MarkService.cs",
+              "RelativeDocumentMoniker": "..\\Progress_ServiceLayer\\CustomServices\\MarkService.cs",
+              "ToolTip": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\CustomServices\\MarkService.cs",
+              "RelativeToolTip": "..\\Progress_ServiceLayer\\CustomServices\\MarkService.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAswCAAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-02T09:03:25.263Z",
+              "WhenOpened": "2026-09-02T10:36:28.416Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ICustomService.cs",
+              "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\ICustomServices\\ICustomService.cs",
+              "RelativeDocumentMoniker": "..\\Progress_ServiceLayer\\ICustomServices\\ICustomService.cs",
+              "ToolTip": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\ICustomServices\\ICustomService.cs",
+              "RelativeToolTip": "..\\Progress_ServiceLayer\\ICustomServices\\ICustomService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-02T10:31:45.532Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Repository.cs",
+              "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Repository\\Repository.cs",
+              "RelativeDocumentMoniker": "..\\Progress_RepositoryLayer\\Repository\\Repository.cs",
+              "ToolTip": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Repository\\Repository.cs",
+              "RelativeToolTip": "..\\Progress_RepositoryLayer\\Repository\\Repository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-02T10:09:44.862Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IRepository.cs",
+              "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\IRepository\\IRepository.cs",
+              "RelativeDocumentMoniker": "..\\Progress_RepositoryLayer\\IRepository\\IRepository.cs",
+              "ToolTip": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\IRepository\\IRepository.cs",
+              "RelativeToolTip": "..\\Progress_RepositoryLayer\\IRepository\\IRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-02T10:04:26.267Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "20260902090324_InitialCreate.cs",
+              "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
+              "RelativeDocumentMoniker": "..\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
+              "ToolTip": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
+              "RelativeToolTip": "..\\Progress_DomainLayer\\Migrations\\20260902090324_InitialCreate.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-02T09:03:25.263Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_Report\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -91,12 +153,11 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-02T08:44:32.628Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-02T08:44:32.628Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_Report\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -104,12 +165,11 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-09-02T08:39:01.887Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-02T08:39:01.887Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "SQLiteDBContext.cs",
               "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Data\\SQLiteDBContext.cs",
               "RelativeDocumentMoniker": "..\\Progress_DomainLayer\\Data\\SQLiteDBContext.cs",
@@ -117,12 +177,11 @@
               "RelativeToolTip": "..\\Progress_DomainLayer\\Data\\SQLiteDBContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-02T08:28:35.496Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-02T08:28:35.496Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "Marks.cs",
               "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Models\\Marks.cs",
               "RelativeDocumentMoniker": "..\\Progress_DomainLayer\\Models\\Marks.cs",
@@ -130,12 +189,11 @@
               "RelativeToolTip": "..\\Progress_DomainLayer\\Models\\Marks.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-02T08:25:16.999Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-02T08:25:16.999Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "BaseEntity.cs",
               "DocumentMoniker": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Models\\BaseEntity.cs",
               "RelativeDocumentMoniker": "..\\Progress_DomainLayer\\Models\\BaseEntity.cs",
@@ -143,8 +201,7 @@
               "RelativeToolTip": "..\\Progress_DomainLayer\\Models\\BaseEntity.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-02T08:23:34.356Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-02T08:23:34.356Z"
             }
           ]
         }
