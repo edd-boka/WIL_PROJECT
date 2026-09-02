@@ -125,6 +125,12 @@
             "projectReferences": {
               "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Progress_DomainLayer.csproj": {
                 "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Progress_DomainLayer.csproj"
+              },
+              "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj": {
+                "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj"
+              },
+              "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\Progress_ServiceLayer.csproj": {
+                "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\Progress_ServiceLayer.csproj"
               }
             }
           }
@@ -150,6 +156,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[7.0.4, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[6.0.18, )"
             }
           },
           "imports": [
@@ -167,6 +177,147 @@
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
             },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.314\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj",
+        "projectName": "Progress_RepositoryLayer",
+        "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj",
+        "packagesPath": "C:\\Users\\eddbo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\eddbo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Progress_DomainLayer.csproj": {
+                "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Progress_DomainLayer.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.314\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\Progress_ServiceLayer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\Progress_ServiceLayer.csproj",
+        "projectName": "Progress_ServiceLayer",
+        "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\Progress_ServiceLayer.csproj",
+        "packagesPath": "C:\\Users\\eddbo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_ServiceLayer\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\eddbo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Progress_DomainLayer.csproj": {
+                "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_DomainLayer\\Progress_DomainLayer.csproj"
+              },
+              "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj": {
+                "projectPath": "C:\\Users\\eddbo\\OneDrive - Central University of Technology Free State\\Desktop\\WIL_PROJECT\\Progress_RepositoryLayer\\Progress_RepositoryLayer.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

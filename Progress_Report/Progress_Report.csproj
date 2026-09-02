@@ -15,10 +15,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.18" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Progress_DomainLayer\Progress_DomainLayer.csproj" />
+    <ProjectReference Include="..\Progress_RepositoryLayer\Progress_RepositoryLayer.csproj" />
+    <ProjectReference Include="..\Progress_ServiceLayer\Progress_ServiceLayer.csproj" />
   </ItemGroup>
 
 </Project>
