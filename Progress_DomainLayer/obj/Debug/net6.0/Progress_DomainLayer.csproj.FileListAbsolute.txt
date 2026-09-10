@@ -1,0 +1,15 @@
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\bin\Debug\net6.0\Progress_DomainLayer.deps.json
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\bin\Debug\net6.0\Progress_DomainLayer.runtimeconfig.json
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\bin\Debug\net6.0\Progress_DomainLayer.dll
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\bin\Debug\net6.0\Progress_DomainLayer.pdb
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.csproj.AssemblyReference.cache
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.AssemblyInfoInputs.cache
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.AssemblyInfo.cs
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.csproj.CoreCompileInputs.cache
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.sourcelink.json
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.dll
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\refint\Progress_DomainLayer.dll
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.pdb
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\Progress_DomainLayer.genruntimeconfig.cache
+C:\Users\eddbo\OneDrive - Central University of Technology Free State\Desktop\WIL_PROJECT\Progress_DomainLayer\obj\Debug\net6.0\ref\Progress_DomainLayer.dll
