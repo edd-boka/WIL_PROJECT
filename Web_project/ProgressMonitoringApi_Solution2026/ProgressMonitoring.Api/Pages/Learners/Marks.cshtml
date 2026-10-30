@@ -1,0 +1,167 @@
+@page
+@model ProgressMonitoring.Api.Pages.Learners.MarksModel
+@using ProgressMonitoring.Api.Data
+@{
+    ViewData["Title"] = "Marks";
+}
+
+@if (Model.SelectedLearner is null)
+{
+    <div class="alert alert-warning">
+        Learner not found. Go back to <a asp-page="/Learners/Index">Learners</a>.
+    </div>
+    return;
+}
+
+<style>
+    .subject-card {
+        display: block; text-decoration: none; color: inherit;
+        border-width: 2px !important; border-radius: .75rem;
+        transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .subject-card:hover { transform: translateY(-2px); box-shadow: 0 .4rem 1rem rgba(0,0,0,.12) !important; color: inherit; }
+    .subject-card.active { box-shadow: 0 0 0 .2rem rgba(13,110,253,.35) !important; }
+    .subject-card .avg { font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">@Model.SelectedLearner.FirstName @Model.SelectedLearner.LastName</h2>
+        <div class="text-muted">
+            Grade @Model.SelectedLearner.Grade | Pass mark: @SchoolRules.PassPercent%
+            @if (Model.OverallAverage is double overall)
+            {
+                var overallPass = overall >= SchoolRules.PassPercent;
+                <span class="ms-2">| Overall average (your subjects):</span>
+                <span class="badge @(overallPass ? "bg-success" : "bg-danger")">@(overall.ToString("0.#"))% @(overallPass ? "PASS" : "FAIL")</span>
+            }
+        </div>
+    </div>
+    <a asp-page="/Learners/Index" class="btn btn-outline-secondary btn-sm">&larr; Back to Learners</a>
+</div>
+
+@if (!Model.SubjectCards.Any())
+{
+    <div class="alert alert-info">
+        There are no subjects set up for Grade @Model.SelectedLearner.Grade yet.
+        Add them on <a asp-page="/Teaching/Index">My Classes</a> (use the &ldquo;Subject not listed?&rdquo; form).
+    </div>
+    return;
+}
+
+@* ---------- Subject cards ---------- *@
+<div class="text-muted small mb-1">Choose a subject to see its tests and average</div>
+<div class="row g-3 mb-4">
+    @foreach (var card in Model.SubjectCards)
+    {
+        var isActive = card.Id == Model.SubjectId;
+        var hasAverage = card.Average is double;
+        var passed = hasAverage && card.Average >= SchoolRules.PassPercent;
+        var border = !hasAverage ? "border-secondary" : passed ? "border-success" : "border-danger";
+
+        <div class="col-6 col-md-4 col-xl-3">
+            <a class="subject-card card shadow-sm h-100 @border @(isActive ? "active" : "")"
+               asp-page="/Learners/Marks"
+               asp-route-learnerId="@Model.LearnerId"
+               asp-route-subjectId="@card.Id"
+               asp-route-sort="@(Model.OldestFirst ? "asc" : null)">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="fw-semibold">@card.Name</div>
+                        @if (!card.IsGradeSubject)
+                        {
+                            <span class="badge bg-light text-muted border">Other subject</span>
+                        }
+                    </div>
+
+                    @if (card.Average is double avg)
+                    {
+                        <div class="avg mt-2 @(passed ? "text-success" : "text-danger")">@(avg.ToString("0.#"))%</div>
+                        <div class="d-flex justify-content-between align-items-center mt-1">
+                            <span class="text-muted small">@card.TestCount test@(card.TestCount == 1 ? "" : "s")</span>
+                            <span class="badge @(passed ? "bg-success" : "bg-danger")">@(passed ? "PASS" : "FAIL")</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted mt-2">No tests yet</div>
+                    }
+                </div>
+            </a>
+        </div>
+    }
+</div>
+
+@* ---------- Selected subject ---------- *@
+@if (Model.SelectedSubject is null)
+{
+    <p class="text-muted">Select a subject card above.</p>
+    return;
+}
+
+@{
+    var subject = Model.SelectedSubject;
+}
+
+<h4 class="mb-3">@subject.Name</h4>
+
+@if (subject.Average is double subjectAverage)
+{
+    var subjectPass = subjectAverage >= SchoolRules.PassPercent;
+
+    <div class="alert @(subjectPass ? "alert-success" : "alert-danger") d-flex justify-content-between align-items-center"
+         style="max-width: 420px;">
+        <div>
+            <div class="small">Average &ndash; @subject.Name</div>
+            <span class="fs-4 fw-bold">@(subjectAverage.ToString("0.#"))%</span>
+        </div>
+        <span class="fs-4 fw-bold">@(subjectPass ? "PASS" : "FAIL")</span>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="text-muted small">Ordered by date the mark was captured</div>
+        <a class="btn btn-outline-secondary btn-sm" asp-page="/Learners/Marks"
+           asp-route-learnerId="@Model.LearnerId"
+           asp-route-subjectId="@subject.Id"
+           asp-route-sort="@(Model.OldestFirst ? null : "asc")">
+            @(Model.OldestFirst ? "Oldest first \u2191" : "Newest first \u2193")
+        </a>
+    </div>
+
+    <div class="table-responsive">
+    <table class="table table-sm table-hover bg-white shadow-sm">
+        <thead>
+            <tr>
+                <th>Assessment</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>%</th>
+                <th>Result</th>
+                <th>Date captured</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mark in Model.Marks)
+            {
+                var percent = SchoolRules.Percent(mark.ScoreValue, mark.Total);
+                var passed = SchoolRules.IsPass(mark.ScoreValue, mark.Total);
+
+                <tr class="@(passed ? "table-success" : "table-danger")">
+                    <td>@mark.AssessmentTitle</td>
+                    <td>@mark.AssessmentType</td>
+                    <td>@mark.ScoreValue / @mark.Total</td>
+                    <td>@(percent.ToString("0.#"))%</td>
+                    <td>
+                        <span class="badge @(passed ? "bg-success" : "bg-danger")">@(passed ? "Pass" : "Fail")</span>
+                    </td>
+                    <td>@mark.DateRecorded.ToString("dd MMM yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+}
+else
+{
+    <p class="text-muted">No tests have been captured for @subject.Name yet.</p>
+}

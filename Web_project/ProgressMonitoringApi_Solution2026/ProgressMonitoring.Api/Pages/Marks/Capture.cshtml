@@ -1,0 +1,73 @@
+@page "{id:guid}"
+@model ProgressMonitoring.Api.Pages.Assessments.CaptureModel
+@{
+    ViewData["Title"] = "Capture Marks";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">@Model.Assessment!.Title</h2>
+        <div class="text-muted">
+            @Model.SubjectName | Grade @Model.Assessment.Grade | @Model.Assessment.AssessmentType |
+            @Model.Assessment.DateOfAssessment.ToString("dd MMM yyyy") |
+            Total @Model.Assessment.Total
+        </div>
+    </div>
+    <a asp-page="/Assessments/Index1" class="btn btn-outline-secondary btn-sm">Back to Assessments</a>
+</div>
+
+@if (TempData["Message"] is string message)
+{
+<div class="alert alert-success">@message</div>
+}
+
+@if (!ModelState.IsValid)
+{
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+        {
+        <li>@error.ErrorMessage</li>
+        }
+    </ul>
+</div>
+}
+
+@if (!Model.Rows.Any())
+{
+<div class="alert alert-warning">
+    There are no learners in Grade @Model.Assessment.Grade yet. Add them on the
+    <a asp-page="/Learners/Add">Add Learner</a> page.
+</div>
+    return;
+}
+
+<form method="post">
+    <table class="table table-sm bg-white shadow-sm" style="max-width: 560px;">
+        <thead>
+            <tr>
+                <th>Learner</th>
+                <th style="width: 180px;">Score (out of @Model.Assessment.Total)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Rows.Count; i++)
+            {
+            <tr>
+                <td class="align-middle">
+                    @Model.Rows[i].LearnerName
+                    <input type="hidden" asp-for="Rows[i].LearnerId" />
+                    <input type="hidden" asp-for="Rows[i].LearnerName" />
+                </td>
+                <td>
+                    <input asp-for="Rows[i].Score" type="number" step="0.5" min="0"
+                           max="@Model.Assessment.Total" class="form-control form-control-sm" />
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <p class="text-muted small">Leave a score blank if the learner has no mark. Blank removes any mark already saved.</p>
+    <button type="submit" class="btn btn-primary">Save all marks</button>
+</form>

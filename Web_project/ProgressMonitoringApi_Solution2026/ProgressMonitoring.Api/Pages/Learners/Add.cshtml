@@ -1,0 +1,75 @@
+@page
+@model ProgressMonitoring.Api.Pages.Learners.AddModel
+@{
+    ViewData["Title"] = "Add Learner";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Add Learner</h2>
+    <a asp-page="Index" class="btn btn-outline-secondary btn-sm">Back to Learners</a>
+</div>
+
+@if (TempData["Message"] is string message)
+{
+<div class="alert alert-success">@message</div>
+}
+
+@if (!ModelState.IsValid)
+{
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+        {
+        <li>@error.ErrorMessage</li>
+        }
+    </ul>
+</div>
+}
+
+<div class="card shadow-sm" style="max-width: 560px;">
+    <div class="card-body">
+        <form method="post">
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label class="form-label">First name</label>
+                    <input asp-for="Input.FirstName" class="form-control" required />
+                </div>
+                <div class="col-6 mb-3">
+                    <label class="form-label">Last name</label>
+                    <input asp-for="Input.LastName" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Grade</label>
+                <select name="Input.Grade" class="form-select" required>
+                    <option value="">-- choose --</option>
+                    @foreach (var grade in Model.GradeOptions)
+                    {
+                    <option value="@grade" selected="@(grade == Model.Input.Grade)">@grade</option>
+                    }
+                </select>
+                <div class="form-text">
+                    Only the grades you teach are listed. The learner is automatically in every subject taught to that grade.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Parent / guardian email</label>
+                <input asp-for="Input.ParentEmail" type="email" class="form-control" autocomplete="off" required />
+                <div class="form-text">
+                    The parent signs in to the parent app with this email and is linked to this learner straight away.
+                    A parent with more than one child at school: use the same email for each child.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Second parent / guardian email <span class="text-muted">(optional)</span></label>
+                <input asp-for="Input.ParentEmail2" type="email" class="form-control" autocomplete="off" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save learner</button>
+            <button type="submit" name="addAnother" value="true" class="btn btn-outline-primary">Save and add another</button>
+        </form>
+    </div>
+</div>

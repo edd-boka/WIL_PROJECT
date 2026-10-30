@@ -1,0 +1,206 @@
+@page
+@model ProgressMonitoring.Api.Pages.Reports.IndexModel
+@using ProgressMonitoring.Api.Data
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<style media="print">
+    .et-side, .no-print { display: none !important; }
+    .et-app { display: block !important; }
+    .et-main { padding: 0 !important; max-width: none !important; }
+    .card { break-inside: avoid; box-shadow: none !important; }
+</style>
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+    <div>
+        <h1 class="h2 mb-0">Reports</h1>
+        <div class="text-muted">How your classes are doing. Generated @DateTime.Now.ToString("dd MMM yyyy")</div>
+    </div>
+    <div class="no-print d-flex gap-2">
+        <a class="btn btn-outline-primary btn-sm" asp-page="/Reports/Index" asp-page-handler="Export"
+           asp-route-grade="@Model.Grade" asp-route-subjectId="@(Model.SubjectId?.ToString())">Download CSV</a>
+        <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+</div>
+
+<form method="get" class="card shadow-sm mb-4 no-print">
+    <div class="card-body row g-2 align-items-end">
+        <div class="col-sm-4">
+            <label class="form-label small mb-1">Grade</label>
+            <select name="grade" class="form-select form-select-sm">
+                <option value="">All my grades</option>
+                @foreach (var g in Model.GradeOptions)
+                {
+                    <option value="@g" selected="@(g == Model.Grade)">Grade @g</option>
+                }
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <label class="form-label small mb-1">Subject</label>
+            <select name="subjectId" class="form-select form-select-sm">
+                <option value="">All my subjects</option>
+                @foreach (var s in Model.SubjectOptions)
+                {
+                    <option value="@s.Id" selected="@(s.Id == Model.SubjectId)">@s.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-sm-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+            <a class="btn btn-outline-secondary btn-sm" asp-page="/Reports/Index">Reset</a>
+        </div>
+    </div>
+</form>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg"><div class="et-stat"><b>@Model.LearnerCount</b><span>Learners</span></div></div>
+    <div class="col-6 col-lg"><div class="et-stat"><b>@Model.AssessmentCount</b><span>Assessments</span></div></div>
+    <div class="col-6 col-lg"><div class="et-stat"><b>@Model.MarksCaptured</b><span>Marks captured</span></div></div>
+    <div class="col-6 col-lg"><div class="et-stat"><b>@(Model.AveragePercent is double avg ? avg.ToString("0.#") + "%" : "-")</b><span>Class average</span></div></div>
+    <div class="col-12 col-lg">
+        <div class="et-stat" style="border-left-color:@(Model.PassRate is double pr && pr >= SchoolRules.PassPercent ? "#1c8a4d" : "#c93a3a")">
+            <b>@(Model.PassRate is double rate ? rate.ToString("0.#") + "%" : "-")</b><span>Pass rate (pass mark @SchoolRules.PassPercent%)</span>
+        </div>
+    </div>
+</div>
+
+@if (Model.MarksCaptured == 0)
+{
+    <div class="alert alert-info">
+        No marks match these filters yet. Capture marks on an assessment and the graphs will appear here.
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body">
+            <h2 class="h6">Average by subject</h2><canvas id="chSubjects" height="200"></canvas></div></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body">
+            <h2 class="h6">Passes and fails by subject</h2><canvas id="chPassFail" height="200"></canvas></div></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body">
+            <h2 class="h6">Progress over time (average per assessment)</h2><canvas id="chTrend" height="200"></canvas></div></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm h-100"><div class="card-body">
+            <h2 class="h6">How marks are spread (% bands)</h2><canvas id="chBands" height="200"></canvas></div></div></div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100"><div class="card-body">
+                <h2 class="h6">Learners who need support <span class="text-muted fw-normal">(average below @SchoolRules.PassPercent%)</span></h2>
+                @if (!Model.NeedSupport.Any())
+                {
+                    <p class="text-muted mb-0">No learners are below the pass mark. Well done!</p>
+                }
+                else
+                {
+                    <table class="table table-sm mb-0">
+                        <thead><tr><th>Learner</th><th>Grade</th><th>Tests</th><th>Average</th></tr></thead>
+                        <tbody>
+                        @foreach (var l in Model.NeedSupport)
+                        {
+                            <tr><td>@l.Name</td><td>@l.Grade</td><td>@l.Tests</td>
+                                <td><span class="badge bg-danger">@l.Average.ToString("0.#")%</span></td></tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div></div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100"><div class="card-body">
+                <h2 class="h6">Top performers</h2>
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Learner</th><th>Grade</th><th>Tests</th><th>Average</th></tr></thead>
+                    <tbody>
+                    @foreach (var l in Model.TopPerformers)
+                    {
+                        <tr><td>@l.Name</td><td>@l.Grade</td><td>@l.Tests</td>
+                            <td><span class="badge @(l.Average >= SchoolRules.PassPercent ? "bg-success" : "bg-danger")">@l.Average.ToString("0.#")%</span></td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div></div>
+        </div>
+    </div>
+}
+
+<h2 class="h5 mb-2">Assessment summary</h2>
+@if (!Model.Assessments.Any())
+{
+    <p class="text-muted">No assessments match these filters.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle bg-white shadow-sm">
+            <thead>
+                <tr><th>Assessment</th><th>Subject</th><th>Grade</th><th>Type</th><th>Date</th><th>Marks in</th><th>Average</th><th>Pass rate</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var a in Model.Assessments)
+            {
+                <tr>
+                    <td>@a.Title</td>
+                    <td>@a.Subject</td>
+                    <td>@a.Grade</td>
+                    <td>@a.Type</td>
+                    <td>@a.Date.ToString("dd MMM yyyy")</td>
+                    <td>@a.Captured / @a.LearnerCount</td>
+                    <td>
+                        @if (a.Average is double av)
+                        {
+                            <span class="badge @(av >= SchoolRules.PassPercent ? "bg-success" : "bg-danger")">@av.ToString("0.#")%</span>
+                        }
+                        else { <span class="text-muted">-</span> }
+                    </td>
+                    <td>@(a.PassRate is double p ? p.ToString("0.#") + "%" : "-")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    @if (Model.MarksCaptured > 0)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+        <script>
+            const d = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Charts));
+            const blue = '#5db2f6', orange = '#ff9a52', green = '#1c8a4d', red = '#c93a3a', ink = '#26323f';
+            Chart.defaults.font.family = '"Nunito Sans", system-ui, sans-serif';
+            Chart.defaults.color = ink;
+            const pct = { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } };
+
+            new Chart(document.getElementById('chSubjects'), {
+                type: 'bar',
+                data: { labels: d.subjects.labels, datasets: [{ label: 'Average %', data: d.subjects.averages, backgroundColor: blue, borderRadius: 6 }] },
+                options: { scales: { y: pct }, plugins: { legend: { display: false } } }
+            });
+
+            new Chart(document.getElementById('chPassFail'), {
+                type: 'bar',
+                data: { labels: d.subjects.labels, datasets: [
+                    { label: 'Pass', data: d.subjects.passes, backgroundColor: green, borderRadius: 4 },
+                    { label: 'Fail', data: d.subjects.fails, backgroundColor: red, borderRadius: 4 } ] },
+                options: { scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } } } }
+            });
+
+            new Chart(document.getElementById('chTrend'), {
+                type: 'line',
+                data: { labels: d.trend.labels, datasets: [
+                    { label: 'Average %', data: d.trend.averages, borderColor: blue, backgroundColor: blue, tension: .3, pointRadius: 4 },
+                    { label: 'Pass mark', data: d.trend.labels.map(() => d.passMark), borderColor: orange, borderDash: [6, 6], pointRadius: 0 } ] },
+                options: { scales: { y: pct } }
+            });
+
+            new Chart(document.getElementById('chBands'), {
+                type: 'bar',
+                data: { labels: d.bands.labels, datasets: [{ label: 'Marks', data: d.bands.counts,
+                    backgroundColor: d.bands.labels.map((_, i) => i < 3 ? red : (i === 3 ? orange : green)), borderRadius: 6 }] },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+            });
+        </script>
+    }
+}

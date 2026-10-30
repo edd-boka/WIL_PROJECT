@@ -1,0 +1,166 @@
+@page
+@model ProgressMonitoring.Api.Pages.Teaching.IndexModel
+@using ProgressMonitoring.Api.Data
+@{
+    ViewData["Title"] = "My Classes";
+    var foundationActive = Model.ActivePhase == "foundation";
+}
+
+<h2 class="mb-1">My Classes</h2>
+<p class="text-muted">
+    Choose what you teach. You will only see the learners, assessments and marks for the classes chosen here.
+</p>
+
+@if (TempData["Message"] is string message)
+{
+<div class="alert alert-success">@message</div>
+}
+@if (TempData["Error"] is string error)
+{
+<div class="alert alert-danger">@error</div>
+}
+
+@if (!Model.HasTeacherProfile)
+{
+<div class="alert alert-info">
+    This account has no teacher profile, so there is no teaching load to set. Admin accounts can see everything.
+</div>
+    return;
+}
+
+@if (Model.IsFirstTime)
+{
+<div class="alert alert-primary">
+    Welcome! Pick your phase below, choose what you teach, then click <strong>Save my classes</strong>.
+</div>
+}
+
+<form method="post" asp-page-handler="Save">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(foundationActive ? "active" : "")" type="button" role="tab"
+                    data-bs-toggle="tab" data-bs-target="#pane-foundation">
+                Foundation Phase (Grades 1&ndash;3)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(foundationActive ? "" : "active")" type="button" role="tab"
+                    data-bs-toggle="tab" data-bs-target="#pane-intermediate">
+                Intermediate Phase (Grades 4&ndash;7)
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        @* ---------- Foundation: class teacher, tick grades only ---------- *@
+        <div class="tab-pane fade @(foundationActive ? "show active" : "")" id="pane-foundation" role="tabpanel">
+            <p class="text-muted">
+                Grades 1&ndash;3 have their own subjects and are taught by a class teacher. Tick each grade
+                you teach and you will automatically get <strong>all</strong> the Foundation Phase subjects for it.
+            </p>
+
+            @if (!Model.FoundationSubjects.Any())
+            {
+                <div class="alert alert-warning">
+                    No Foundation Phase subjects exist yet. Add them with the form below
+                    (choose <em>Foundation</em>), then come back and tick your grades.
+                </div>
+            }
+
+            <div class="row g-3 mb-3">
+                @foreach (var grade in SchoolRules.FoundationGrades)
+                {
+                    <div class="col-md-4">
+                        <label class="card shadow-sm h-100" style="cursor:pointer;">
+                            <div class="card-body d-flex align-items-center gap-3">
+                                <input type="checkbox" class="form-check-input mt-0" style="width:1.4rem;height:1.4rem;"
+                                       name="foundationGrades" value="@grade"
+                                       checked="@Model.FoundationTicked.Contains(grade)" />
+                                <div>
+                                    <div class="fw-semibold">Grade @grade</div>
+                                    <div class="text-muted small">I am the class teacher</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                }
+            </div>
+
+            @if (Model.FoundationSubjects.Any())
+            {
+                <div class="small text-muted">
+                    Foundation subjects: @string.Join(", ", Model.FoundationSubjects.Select(s => s.Name))
+                </div>
+            }
+        </div>
+
+        @* ---------- Intermediate: subject teacher, tick subject + grade ---------- *@
+        <div class="tab-pane fade @(foundationActive ? "" : "show active")" id="pane-intermediate" role="tabpanel">
+            <p class="text-muted">Tick every subject and grade you teach.</p>
+
+            @if (!Model.IntermediateSubjects.Any())
+            {
+                <div class="alert alert-warning">
+                    No Intermediate Phase subjects exist yet. Add one using the form below.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered bg-white shadow-sm text-center align-middle">
+                        <thead>
+                            <tr>
+                                <th class="text-start">Subject \ Grade</th>
+                                @foreach (var grade in SchoolRules.IntermediateGrades)
+                                {
+                                    <th>@grade</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subject in Model.IntermediateSubjects)
+                            {
+                                <tr>
+                                    <td class="text-start">@subject.Name</td>
+                                    @foreach (var grade in SchoolRules.IntermediateGrades)
+                                    {
+                                        var key = $"{subject.Id}|{grade}";
+                                        <td>
+                                            <input type="checkbox" class="form-check-input" name="assignments"
+                                                   value="@key" checked="@Model.Ticked.Contains(key)" />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save my classes</button>
+</form>
+
+<div class="card shadow-sm mt-4" style="max-width: 520px;">
+    <div class="card-body">
+        <h6 class="card-title">Subject not listed?</h6>
+        <form method="post" asp-page-handler="AddSubject" class="row g-2">
+            <div class="col-12">
+                <input name="newSubjectName" class="form-control" maxlength="100"
+                       placeholder="e.g. Life Skills" required />
+            </div>
+            <div class="col-8">
+                <select name="phase" class="form-select">
+                    <option value="Foundation">Foundation (Grades 1&ndash;3)</option>
+                    <option value="Intermediate">Intermediate (Grades 4&ndash;7)</option>
+                    <option value="Both">Both phases</option>
+                </select>
+            </div>
+            <div class="col-4">
+                <button type="submit" class="btn btn-outline-primary w-100">Add</button>
+            </div>
+        </form>
+    </div>
+</div>

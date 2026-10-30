@@ -1,0 +1,227 @@
+@page
+@model ProgressMonitoring.Api.Pages.Assessments.IndexModel
+@using ProgressMonitoring.Api.Data
+@{
+    ViewData["Title"] = "Assessments";
+}
+
+<style>
+    .grade-card {
+        display: block; text-decoration: none; color: inherit;
+        border: 2px solid transparent; border-radius: .75rem;
+        transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .grade-card:hover { transform: translateY(-2px); box-shadow: 0 .4rem 1rem rgba(0,0,0,.12) !important; color: inherit; }
+    .grade-card.active { border-color: var(--bs-primary); background: var(--bs-primary-bg-subtle); }
+    .grade-card.empty { opacity: .6; }
+    .grade-card .grade-name { font-weight: 600; font-size: 1rem; }
+    .grade-card .grade-count { font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">Assessments</h2>
+        <div class="text-muted small">@Model.TotalAssessments assessment@(Model.TotalAssessments == 1 ? "" : "s") in total</div>
+    </div>
+    @if (Model.HasFilter)
+    {
+        <a class="btn btn-outline-secondary btn-sm" asp-page="/Assessments/Index1">Clear all filters</a>
+    }
+</div>
+
+@if (!ModelState.IsValid)
+{
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+        {
+        <li>@error.ErrorMessage</li>
+        }
+    </ul>
+</div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+
+        @* ---------- Search (subject and/or title) ---------- *@
+        <form method="get" class="mb-3">
+            @if (!string.IsNullOrEmpty(Model.Grade))
+            {
+                <input type="hidden" name="grade" value="@Model.Grade" />
+            }
+            @if (Model.SubjectId is Guid hiddenSubject)
+            {
+                <input type="hidden" name="subjectId" value="@hiddenSubject" />
+            }
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white">&#128269;</span>
+                <input type="search" name="q" value="@Model.SearchTerm" class="form-control"
+                       placeholder="Search by subject or assessment title..." autocomplete="off" />
+                <button type="submit" class="btn btn-primary">Search</button>
+                @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                {
+                    <a class="btn btn-outline-secondary" asp-page="/Assessments/Index1"
+                       asp-route-grade="@Model.Grade" asp-route-subjectId="@(Model.SubjectId?.ToString())">Clear</a>
+                }
+            </div>
+        </form>
+
+        @* ---------- Grade cards ---------- *@
+        @if (Model.GradeCards.Any())
+        {
+            <div class="text-muted small mb-1">Grade</div>
+            <div class="row g-2 mb-3">
+                @foreach (var card in Model.GradeCards)
+                {
+                    var isActive = card.Grade == Model.Grade;
+                    <div class="col-4 col-md-3 col-xl-2">
+                        @* Clicking the selected card again clears the grade filter. *@
+                        <a class="grade-card card shadow-sm h-100 @(isActive ? "active" : "") @(card.Count == 0 ? "empty" : "")"
+                           asp-page="/Assessments/Index1"
+                           asp-route-grade="@(isActive ? null : card.Grade)"
+                           asp-route-subjectId="@(Model.SubjectId?.ToString())"
+                           asp-route-q="@Model.SearchTerm">
+                            <div class="card-body py-2 px-3">
+                                <div class="grade-name">Grade @card.Grade</div>
+                                <div class="grade-count">@card.Count</div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+
+        @* ---------- Subject chips ---------- *@
+        @if (Model.SubjectChips.Any())
+        {
+            <div class="text-muted small mb-1">Subject</div>
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                @foreach (var chip in Model.SubjectChips)
+                {
+                    var isActive = chip.Id == Model.SubjectId;
+                    <a class="btn btn-sm @(isActive ? "btn-primary" : "btn-outline-primary")"
+                       asp-page="/Assessments/Index1"
+                       asp-route-grade="@Model.Grade"
+                       asp-route-subjectId="@(isActive ? null : chip.Id.ToString())"
+                       asp-route-q="@Model.SearchTerm">
+                        @chip.Name <span class="badge @(isActive ? "bg-light text-primary" : "bg-primary") ms-1">@chip.Count</span>
+                    </a>
+                }
+            </div>
+        }
+
+        @* ---------- Results ---------- *@
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">
+                @(Model.HasFilter ? "Results" : "All assessments")
+                <span class="badge bg-secondary ms-1">@Model.Items.Count</span>
+            </h5>
+        </div>
+
+        @if (!Model.Items.Any())
+        {
+            <div class="text-center text-muted py-5 bg-white shadow-sm rounded">
+                @if (Model.TotalAssessments == 0)
+                {
+                    <text>No assessments yet. Create one to start capturing marks.</text>
+                }
+                else
+                {
+                    <text>No assessments match your filters.</text>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle bg-white shadow-sm">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Grade</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Marks Allocated</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.Items)
+                    {
+                    <tr>
+                        <td>@a.Title</td>
+                        <td>@a.SubjectName</td>
+                        <td>@a.Grade</td>
+                        <td>@a.AssessmentType</td>
+                        <td>@a.Date.ToString("dd MMM yyyy")</td>
+                        <td>@a.Total</td>
+                        <td>
+                            @{ var complete = a.LearnerCount > 0 && a.MarksCaptured >= a.LearnerCount; }
+                            <span class="badge @(complete ? "bg-success" : a.MarksCaptured == 0 ? "bg-secondary" : "bg-warning text-dark")">
+                                @a.MarksCaptured/@a.LearnerCount learners
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a asp-page="/Marks/Capture" asp-route-id="@a.Id" class="btn btn-sm btn-outline-primary">Capture marks</a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">New Assessment</h5>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input asp-for="Input.Title" class="form-control" placeholder="e.g. Term 3 Maths Test" required />
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small">Class</label>
+                        <select asp-for="Input.ClassKey" class="form-select form-select-sm" required>
+                            <option value="">-- choose --</option>
+                            @foreach (var option in Model.MyClasses)
+                            {
+                                <option value="@option.Key">@option.Label</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Input.ClassKey" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Assessment Type</label>
+                        <select name="Input.AssessmentType" class="form-select">
+                            @foreach (var type in AssessmentExtensions.AssessmentTypes)
+                            {
+                            <option selected="@(type == Model.Input.AssessmentType)">@type</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input name="Input.DateOfAssessment" type="date" class="form-control"
+                                   value="@Model.Input.DateOfAssessment.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Total marks</label>
+                            <input asp-for="Input.Total" type="number" step="0.5" min="0.5" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create and capture marks</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

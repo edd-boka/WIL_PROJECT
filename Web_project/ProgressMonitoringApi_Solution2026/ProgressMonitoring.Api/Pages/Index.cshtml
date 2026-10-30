@@ -1,0 +1,40 @@
+@page
+@model ProgressMonitoring.Api.Pages.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="et-hero">
+    <h1>Welcome, @Model.TeacherName</h1>
+    <p>Here's a quick overview of your classes. Pick up where you left off, or jump straight to what you need.</p>
+</div>
+
+<div class="et-stats">
+    <div class="et-stat"><b>@Model.LearnerCount</b><span>Learners you teach</span></div>
+    <div class="et-stat"><b>@Model.MarksCapturedByMe</b><span>Marks you've captured</span></div>
+</div>
+
+<h2 class="h5 mb-3">Where to next</h2>
+<div class="et-tiles">
+    <a class="et-tile" asp-page="/Learners/Index">
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 5a3.2 3.2 0 010 6M18 14.8c2 .6 3.2 2.3 3.5 5.2"/></svg></div>
+        <strong>Learners</strong><span>Add learners and see each one's marks by subject.</span>
+    </a>
+    <a class="et-tile" asp-page="/Assessments/Index1">
+        <div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
+        <strong>Assessments</strong><span>Create a test, then capture marks for the class.</span>
+    </a>
+    <a class="et-tile" asp-page="/Teaching/Index">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M7 9.5V15c0 1.4 2.2 3 5 3s5-1.6 5-3V9.5"/></svg></div>
+        <strong>My Classes</strong><span>Choose the grades and subjects you teach.</span>
+    </a>
+</div>
+
+@if (!Model.HasTeacherProfile)
+{
+    <div class="alert alert-warning mt-4">
+        No teacher profile is linked to your account yet, so you won't be able to save marks
+        (marks record which teacher captured them). Ask an admin to create a
+        <code>Teacher</code> row linked to your <code>User.Id</code>.
+    </div>
+}

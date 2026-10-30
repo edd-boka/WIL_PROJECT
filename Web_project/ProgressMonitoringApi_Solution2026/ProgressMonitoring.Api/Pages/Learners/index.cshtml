@@ -1,0 +1,164 @@
+@page
+@model ProgressMonitoring.Api.Pages.Learners.IndexModel
+@{
+    ViewData["Title"] = "Learners";
+}
+
+<style>
+    .grade-card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        border: 2px solid transparent;
+        border-radius: .75rem;
+        transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .grade-card:hover { transform: translateY(-2px); box-shadow: 0 .4rem 1rem rgba(0,0,0,.12) !important; color: inherit; }
+    .grade-card.active { border-color: var(--bs-primary); background: var(--bs-primary-bg-subtle); }
+    .grade-card.empty { opacity: .6; }
+    .grade-card .grade-name { font-weight: 600; font-size: 1.05rem; }
+    .grade-card .grade-count { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
+    .avatar {
+        width: 34px; height: 34px; border-radius: 50%;
+        background: var(--bs-primary-bg-subtle); color: var(--bs-primary-text-emphasis);
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: .8rem; font-weight: 600;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">Learners</h2>
+        @if (!Model.NeedsOnboarding)
+        {
+            <div class="text-muted small">@Model.TotalLearners learner@(Model.TotalLearners == 1 ? "" : "s") in your classes</div>
+        }
+    </div>
+    <a class="btn btn-primary" asp-page="/Learners/Add">Add Learner</a>
+</div>
+
+@if (Model.NeedsOnboarding)
+{
+    <div class="alert alert-info">
+        You haven't chosen the grades you teach yet.
+        <a asp-page="/Teaching/Index">Set up My Classes</a> to see your learners.
+    </div>
+    return;
+}
+
+@* ---------- Search ---------- *@
+<form method="get" class="mb-4">
+    @if (!string.IsNullOrEmpty(Model.Grade))
+    {
+        <input type="hidden" name="grade" value="@Model.Grade" />
+    }
+    <div class="input-group shadow-sm">
+        <span class="input-group-text bg-white">&#128269;</span>
+        <input type="search" name="q" value="@Model.SearchTerm" class="form-control"
+               placeholder="Search your learners by name or surname..." autocomplete="off" />
+        <button type="submit" class="btn btn-primary">Search</button>
+        @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+        {
+            <a class="btn btn-outline-secondary" asp-page="/Learners/Index" asp-route-grade="@Model.Grade">Clear</a>
+        }
+    </div>
+</form>
+
+@* ---------- Grade cards ---------- *@
+@if (!Model.Cards.Any())
+{
+    <p class="text-muted">No grades to show.</p>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        @foreach (var card in Model.Cards)
+        {
+            var isActive = card.Grade == Model.Grade;
+            <div class="col-6 col-md-4 col-lg-3">
+                @* Clicking the selected card again clears the grade filter. *@
+                <a class="grade-card card shadow-sm h-100 @(isActive ? "active" : "") @(card.Count == 0 ? "empty" : "")"
+                   asp-page="/Learners/Index"
+                   asp-route-grade="@(isActive ? null : card.Grade)"
+                   asp-route-q="@Model.SearchTerm">
+                    <div class="card-body">
+                        <div class="grade-name">Grade @card.Grade</div>
+                        <div class="grade-count">@card.Count</div>
+                        <div class="text-muted small">learner@(card.Count == 1 ? "" : "s")</div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}
+
+@* ---------- Learner list ---------- *@
+@if (!Model.HasSelection)
+{
+    <div class="text-center text-muted py-5 bg-white shadow-sm rounded">
+        Select a grade above to see its learners, or search by name.
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">
+            @if (!string.IsNullOrEmpty(Model.Grade))
+            {
+                <text>Grade @Model.Grade</text>
+            }
+            else
+            {
+                <text>Search results</text>
+            }
+            <span class="badge bg-secondary ms-1">@Model.Learners.Count</span>
+        </h5>
+        @if (!string.IsNullOrEmpty(Model.Grade))
+        {
+            <a class="small" asp-page="/Learners/Index" asp-route-q="@Model.SearchTerm">Show all grades</a>
+        }
+    </div>
+
+    @if (!Model.Learners.Any())
+    {
+        <div class="text-center text-muted py-5 bg-white shadow-sm rounded">
+            @if (string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <text>No learners found.</text>
+            }
+            else
+            {
+                <text>No learners found matching "@Model.SearchTerm".</text>
+            }
+        </div>
+    }
+    else
+    {
+        <table class="table table-hover align-middle bg-white shadow-sm">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Grade</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var learner in Model.Learners)
+                {
+                    <tr>
+                        <td>
+                            <span class="avatar me-2">@(learner.FirstName.Length > 0 ? learner.FirstName[0] : '?')@(learner.LastName.Length > 0 ? learner.LastName[0] : '?')</span>
+                            @learner.LastName, @learner.FirstName
+                        </td>
+                        <td>@learner.Grade</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-primary" asp-page="/Learners/Marks" asp-route-learnerId="@learner.Id">
+                                View Marks
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
