@@ -55,5 +55,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<LearnerParentEmail>()
             .HasIndex(e => new { e.LearnerId, e.Email })
             .IsUnique();
+
+        modelBuilder.Entity<Teacher>()
+            .ToTable("teachers", table => table.HasCheckConstraint(
+                "ck_teachers_staff_id_five_digits",
+                "\"staff_id\" ~ '^[0-9]{5}$'"));
+        modelBuilder.Entity<Teacher>().HasIndex(teacher => teacher.StaffId).IsUnique();
     }
 }
