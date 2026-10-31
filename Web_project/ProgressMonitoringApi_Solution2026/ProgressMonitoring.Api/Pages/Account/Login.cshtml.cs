@@ -35,9 +35,11 @@ public class LoginModel : PageModel
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == Email);
 
-        if (user is null || user.Role != "teacher" || !BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash))
+        if (user is null ||
+            (user.Role != "teacher" && user.Role != "admin") ||
+            !BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash))
         {
-            ErrorMessage = "Invalid email or password, or this account is not a teacher account.";
+            ErrorMessage = "Invalid email or password, or this account cannot access the staff portal.";
             return Page();
         }
 
@@ -60,6 +62,8 @@ public class LoginModel : PageModel
                 ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8),
             });
 
-        return RedirectToPage("/Index");
+        return user.Role == "admin"
+            ? RedirectToPage("/Admin/Index")
+            : RedirectToPage("/Index");
     }
 }
