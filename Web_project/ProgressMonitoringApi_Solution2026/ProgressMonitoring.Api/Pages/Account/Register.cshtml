@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ProgressMonitoring.Api.Pages.Account.RegisterModel
 @{
     ViewData["Title"] = "Sign Up";
@@ -29,6 +29,13 @@
                             <input asp-for="LastName" class="form-control" required />
                             <span asp-validation-for="LastName" class="text-danger small"></span>
                         </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="StaffId" class="form-label">Staff ID <span class="text-danger">*</span></label>
+                        <input asp-for="StaffId" class="form-control" autocomplete="off" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" required />
+                        <span asp-validation-for="StaffId" class="text-danger small"></span>
+                        <div class="form-text">Enter any 5-digit staff ID. If it is not already registered, a teacher profile will be created for you.</div>
                     </div>
 
                     <div class="mb-3">
