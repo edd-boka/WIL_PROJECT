@@ -7,6 +7,10 @@
 <div class="et-hero">
     <h1>Welcome, @Model.TeacherName</h1>
     <p>Here's a quick overview of your classes. Pick up where you left off, or jump straight to what you need.</p>
+    @if (Model.HasTeacherProfile && Model.StaffId is not null)
+    {
+        <p class="mb-0">Staff ID: <code>@Model.StaffId</code></p>
+    }
 </div>
 
 <div class="et-stats">
