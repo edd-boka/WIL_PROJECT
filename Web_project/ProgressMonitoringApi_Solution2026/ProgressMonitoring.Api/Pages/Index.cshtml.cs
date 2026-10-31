@@ -14,6 +14,7 @@ public class IndexModel : PageModel
     }
 
     public string TeacherName { get; set; } = "Teacher";
+    public string? StaffId { get; set; }
     public bool HasTeacherProfile { get; set; }
 
     // Learners the logged-in teacher teaches (not everyone in the system).
@@ -33,6 +34,7 @@ public class IndexModel : PageModel
             {
                 HasTeacherProfile = true;
                 TeacherName = $"{teacher.FirstName} {teacher.LastName}";
+                StaffId = teacher.StaffId;
                 MarksCapturedByMe = await _db.Marks.CountAsync(m => m.TeacherId == teacher.Id);
             }
         }
