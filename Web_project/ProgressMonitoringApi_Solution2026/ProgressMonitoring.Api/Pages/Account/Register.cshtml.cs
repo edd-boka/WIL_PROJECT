@@ -30,6 +30,12 @@ public class RegisterModel : PageModel
     public string LastName { get; set; } = string.Empty;
 
     [BindProperty]
+    [Required(ErrorMessage = "Staff ID is required.")]
+    [MaxLength(5)]
+    [RegularExpression("^[0-9]{5}$", ErrorMessage = "Enter the 5-digit staff ID provided by your school.")]
+    public string StaffId { get; set; } = string.Empty;
+
+    [BindProperty]
     [Required(ErrorMessage = "Email is required.")]
     [EmailAddress(ErrorMessage = "Enter a valid email address.")]
     public string Email { get; set; } = string.Empty;
@@ -57,9 +63,31 @@ public class RegisterModel : PageModel
             return Page();
         }
 
-        if (await _db.Users.AnyAsync(u => u.Email == Email))
+        Email = Email.Trim();
+        StaffId = StaffId.Trim();
+        if (StaffId.Length == 0)
+        {
+            ModelState.AddModelError(nameof(StaffId), "Staff ID is required.");
+            return Page();
+        }
+
+        if (await _db.Users.AnyAsync(u => u.Email.ToLower() == Email.ToLower()))
         {
             ErrorMessage = "An account with that email already exists.";
+            return Page();
+        }
+
+        var teacher = await _db.Teachers.FirstOrDefaultAsync(item => item.StaffId == StaffId);
+        if (teacher?.UserId is not null)
+        {
+            ErrorMessage = "That staff ID is already linked to an account.";
+            return Page();
+        }
+
+        if (teacher?.Email is not null &&
+            !string.Equals(teacher.Email, Email, StringComparison.OrdinalIgnoreCase))
+        {
+            ErrorMessage = "Use the email address assigned to this staff ID.";
             return Page();
         }
 
@@ -73,16 +101,21 @@ public class RegisterModel : PageModel
             Role = "teacher"
         };
         _db.Users.Add(user);
-        await _db.SaveChangesAsync();   // the user row now exists in the database
 
-        _db.Teachers.Add(new Teacher
+        if (teacher is null)
         {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,           // taken after the user has been saved
-            FirstName = FirstName,
-            LastName = LastName
-        });
+            teacher = new Teacher
+            {
+                Id = Guid.NewGuid(),
+                StaffId = StaffId,
+                FirstName = FirstName.Trim(),
+                LastName = LastName.Trim()
+            };
+            _db.Teachers.Add(teacher);
+        }
 
+        teacher.UserId = user.Id;
+        teacher.Email = Email;
         await _db.SaveChangesAsync();
         await tx.CommitAsync();
 
