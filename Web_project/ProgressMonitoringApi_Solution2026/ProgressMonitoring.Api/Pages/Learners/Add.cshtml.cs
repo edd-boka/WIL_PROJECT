@@ -15,8 +15,11 @@ public class AddModel : PageModel
     public AddModel(AppDbContext db) => _db = db;
 
     public List<string> GradeOptions { get; set; } = new();
+    public List<TeacherOption> TeacherOptions { get; set; } = new();
 
     [BindProperty] public InputModel Input { get; set; } = new();
+
+    public record TeacherOption(Guid Id, string Name, string Grade);
 
     public class InputModel
     {
@@ -28,6 +31,8 @@ public class AddModel : PageModel
 
         [Required, StringLength(20)]
         public string Grade { get; set; } = string.Empty;
+
+        public Guid? TeacherId { get; set; }
 
         // Parents sign in to the parent app with these emails and are linked to this learner automatically.
         [Required(ErrorMessage = "Enter a parent or guardian email."), EmailAddress(ErrorMessage = "Enter a valid parent email."), StringLength(200)]
@@ -42,7 +47,7 @@ public class AddModel : PageModel
         var scope = await _db.GetScopeAsync(User);
         if (scope.NeedsOnboarding) return RedirectToPage("/Teaching/Index");
 
-        GradeOptions = scope.VisibleGrades;
+        await LoadOptionsAsync(scope);
         return Page();
     }
 
@@ -51,14 +56,13 @@ public class AddModel : PageModel
         var scope = await _db.GetScopeAsync(User);
         if (scope.NeedsOnboarding) return RedirectToPage("/Teaching/Index");
 
-        GradeOptions = scope.VisibleGrades;
+        await LoadOptionsAsync(scope);
 
         // The learner is stamped with the teacher who adds them.
-        var ownerId = scope.TeacherId;
+        var ownerId = scope.IsAdmin ? Input.TeacherId : scope.TeacherId;
         if (!scope.IsAdmin && ownerId is null)
         {
             ModelState.AddModelError(string.Empty, "This account has no teacher profile, so it cannot add learners.");
-            return Page();
         }
 
         var first = Input.FirstName.Trim();
@@ -69,6 +73,13 @@ public class AddModel : PageModel
         if (!GradeOptions.Contains(grade))
             ModelState.AddModelError("Input.Grade", "Choose one of the grades you teach.");
 
+        if (scope.IsAdmin &&
+            (ownerId is null || !await _db.TeacherSubjects.AnyAsync(assignment =>
+                assignment.TeacherId == ownerId.Value && assignment.Grade == grade)))
+        {
+            ModelState.AddModelError("Input.TeacherId", "Choose a teacher assigned to the selected grade.");
+        }
+
         if (ModelState.IsValid && await _db.Learners.AnyAsync(l =>
                 l.TeacherId == ownerId &&
                 l.FirstName.ToLower() == first.ToLower() &&
@@ -78,7 +89,11 @@ public class AddModel : PageModel
             ModelState.AddModelError(string.Empty, $"{first} {last} (Grade {grade}) already exists.");
         }
 
-        if (!ModelState.IsValid) return Page();
+        if (!ModelState.IsValid)
+        {
+            await LoadOptionsAsync(scope);
+            return Page();
+        }
 
         var learner = new Learner
         {
@@ -97,5 +112,28 @@ public class AddModel : PageModel
 
         TempData["Message"] = $"{first} {last} added to Grade {grade}.";
         return addAnother ? RedirectToPage() : RedirectToPage("Index");
+    }
+
+    private async Task LoadOptionsAsync(TeacherScope scope)
+    {
+        GradeOptions = scope.IsAdmin ? SchoolRules.Grades.ToList() : scope.VisibleGrades;
+
+        if (!scope.IsAdmin) return;
+
+        var options = await (
+            from assignment in _db.TeacherSubjects
+            join teacher in _db.Teachers on assignment.TeacherId equals teacher.Id
+            orderby teacher.LastName, teacher.FirstName
+            select new
+            {
+                teacher.Id,
+                Name = teacher.FirstName + " " + teacher.LastName,
+                assignment.Grade
+            })
+            .ToListAsync();
+        TeacherOptions = options
+            .DistinctBy(option => new { option.Id, option.Grade })
+            .Select(option => new TeacherOption(option.Id, option.Name, option.Grade))
+            .ToList();
     }
 }
