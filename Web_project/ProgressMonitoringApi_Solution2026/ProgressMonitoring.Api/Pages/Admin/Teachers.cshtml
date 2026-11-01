@@ -1,0 +1,99 @@
+@page
+@model ProgressMonitoring.Api.Pages.Admin.TeachersModel
+@{
+    ViewData["Title"] = "Teachers";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1 class="h2 mb-1">Teachers</h1>
+        <p class="text-muted mb-0">@Model.Teachers.Count teacher profiles in your school.</p>
+    </div>
+    <form method="post" asp-page-handler="GenerateMissingStaffIds">
+        <button type="submit" class="btn btn-outline-primary btn-sm">Generate missing Staff IDs</button>
+    </form>
+</div>
+
+@if (TempData["TeacherMessage"] is string message)
+{
+    <div class="alert alert-success" role="status">@message</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <section class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Import teachers from Excel</h2>
+                <p class="text-muted small">Use the template columns: First Name, Last Name, Staff ID, Email. Staff IDs are generated when blank.</p>
+                <form method="post" enctype="multipart/form-data" asp-page-handler="Import" class="d-flex flex-wrap gap-2 align-items-center">
+                    <input asp-for="ImportFile" type="file" accept=".xlsx" class="form-control form-control-sm flex-grow-1" />
+                    <button type="submit" class="btn btn-primary btn-sm">Import</button>
+                </form>
+                <a class="btn btn-link btn-sm px-0 mt-2" asp-page="/Admin/Teachers" asp-page-handler="DownloadTemplate">Download template</a>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-6">
+        <section class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Add a teacher</h2>
+                <form method="post" asp-page-handler="AddTeacher">
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <label asp-for="FirstName" class="form-label small mb-1">First name</label>
+                            <input asp-for="FirstName" class="form-control form-control-sm" maxlength="100" required />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="LastName" class="form-label small mb-1">Last name</label>
+                            <input asp-for="LastName" class="form-control form-control-sm" maxlength="100" required />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="StaffId" class="form-label small mb-1">Staff ID <span class="text-muted">(optional)</span></label>
+                            <input asp-for="StaffId" class="form-control form-control-sm" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Email" class="form-label small mb-1">Email <span class="text-muted">(optional)</span></label>
+                            <input asp-for="Email" type="email" class="form-control form-control-sm" maxlength="200" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Add teacher</button>
+                    <div class="form-text">The teacher can sign up with this Staff ID to link their account.</div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+<section class="card">
+    <div class="card-header bg-white"><h2 class="h5 mb-0">School teachers (@Model.Teachers.Count)</h2></div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle mb-0">
+            <thead>
+                <tr><th>Teacher</th><th>Staff ID</th><th>Email</th><th>Classes</th><th>Account</th><th></th></tr>
+            </thead>
+            <tbody>
+            @if (Model.Teachers.Count == 0)
+            {
+                <tr><td colspan="6" class="text-muted">No teacher profiles found.</td></tr>
+            }
+            @foreach (var teacher in Model.Teachers)
+            {
+                <tr>
+                    <td>@teacher.Name</td>
+                    <td><code>@teacher.StaffId</code></td>
+                    <td>@teacher.Email</td>
+                    <td>@(teacher.Classes.Count == 0 ? "No classes assigned" : string.Join(", ", teacher.Classes))</td>
+                    <td><span class="badge @(teacher.IsSignedUp ? "text-bg-success" : "text-bg-secondary")">@(teacher.IsSignedUp ? "Signed up" : "Not signed up")</span></td>
+                    <td class="text-end">
+                        <a class="btn btn-outline-primary btn-sm" asp-page="/Reports/Index" asp-route-teacherId="@teacher.Id">View report</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

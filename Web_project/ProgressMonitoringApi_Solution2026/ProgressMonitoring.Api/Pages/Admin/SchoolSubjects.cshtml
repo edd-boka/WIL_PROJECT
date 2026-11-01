@@ -1,0 +1,62 @@
+@page
+@model ProgressMonitoring.Api.Pages.Admin.SchoolSubjectsModel
+@{
+    ViewData["Title"] = "School subjects";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1 class="h2 mb-1">School subjects</h1>
+        <p class="text-muted mb-0">View all subjects available at the school and add subjects when needed.</p>
+    </div>
+    <span class="badge text-bg-primary fs-6">System administrator</span>
+</div>
+
+@if (TempData["AdminMessage"] is string message)
+{
+    <div class="alert alert-success" role="alert">@message</div>
+}
+
+<section class="card mb-4">
+    <div class="card-header bg-white"><h2 class="h5 mb-0">Add a school subject</h2></div>
+    <div class="card-body">
+        <form method="post" asp-page-handler="Add" class="row g-3 align-items-end">
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label">Subject name</label>
+                <input asp-for="Name" class="form-control" maxlength="100" required />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Phase" class="form-label">School phase</label>
+                <select asp-for="Phase" class="form-select">
+                    <option value="Foundation">Foundation (Grades 1-3)</option>
+                    <option value="Intermediate">Intermediate (Grades 4-7)</option>
+                    <option value="Both">Both</option>
+                </select>
+                <span asp-validation-for="Phase" class="text-danger small"></span>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Add subject</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header bg-white"><h2 class="h5 mb-0">Available subjects (@Model.Subjects.Count)</h2></div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0">
+            <thead><tr><th>Subject</th><th>School phase</th></tr></thead>
+            <tbody>
+                @if (Model.Subjects.Count == 0)
+                {
+                    <tr><td colspan="2" class="text-muted">No school subjects are configured yet.</td></tr>
+                }
+                @foreach (var subject in Model.Subjects)
+                {
+                    <tr><td>@subject.Name</td><td>@subject.Phase</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
