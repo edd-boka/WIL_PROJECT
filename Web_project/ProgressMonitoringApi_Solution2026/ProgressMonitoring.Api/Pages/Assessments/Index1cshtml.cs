@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -16,12 +15,6 @@ public class IndexModel : PageModel
 
     public List<AssessmentRow> Items { get; set; } = new();
     public List<Subject> Subjects { get; set; } = new();
-
-    // NEW — this is what was missing. Backs the "Class" dropdown: one
-    // entry per subject+grade the teacher is actually assigned to.
-    public List<ClassOption> MyClasses { get; set; } = new();
-
-    [BindProperty] public InputModel Input { get; set; } = new();
 
     // ?grade=5&subjectId=...&q=fractions  (all optional, so the page is bookmarkable)
     [BindProperty(SupportsGet = true)] public string? Grade { get; set; }
@@ -52,87 +45,9 @@ public class IndexModel : PageModel
         public int LearnerCount { get; set; }
     }
 
-    // NEW — one option in the "Class" dropdown.
-    public record ClassOption(string Key, string Label);
-
-    public class InputModel
-    {
-        [Required, StringLength(100)]
-        public string Title { get; set; } = string.Empty;
-
-        [Required]
-        public string AssessmentType { get; set; } = "Test";
-
-        [Required(ErrorMessage = "Choose a class.")]
-        public string ClassKey { get; set; } = string.Empty;
-        public DateOnly DateOfAssessment { get; set; } = DateOnly.FromDateTime(DateTime.Today);
-
-        [Range(0.5, 10000)]
-        public double Total { get; set; } = 100;
-    }
-
     public async Task OnGetAsync()
     {
         await LoadAsync();
-
-        // Picking a grade and subject pre-selects that class in the "New Assessment" form.
-        if (!string.IsNullOrEmpty(Grade) && SubjectId is Guid sid)
-        {
-            var key = $"{sid}|{Grade}";
-            if (MyClasses.Any(c => c.Key == key)) Input.ClassKey = key;
-        }
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        var teacherId = await _db.GetCurrentTeacherIdAsync(User);
-        if (teacherId is null)
-            ModelState.AddModelError(string.Empty, "This account has no teacher profile, so it cannot create assessments.");
-
-        var scope = await _db.GetScopeAsync(User);
-
-        Guid subjectId = Guid.Empty;
-        string grade = string.Empty;
-        var parts = (Input.ClassKey ?? string.Empty).Split('|');
-
-        if (parts.Length != 2 || !Guid.TryParse(parts[0], out subjectId))
-        {
-            ModelState.AddModelError("Input.ClassKey", "Choose a class.");
-        }
-        else
-        {
-            grade = parts[1];
-            var isRealAssignment = scope.Assignments.Any(a => a.SubjectId == subjectId && a.Grade == grade);
-            if (!isRealAssignment)
-            {
-                ModelState.AddModelError("Input.ClassKey", "That isn't one of your assigned classes.");
-            }
-        }
-
-        if (!AssessmentExtensions.AssessmentTypes.Contains(Input.AssessmentType))
-            ModelState.AddModelError("Input.AssessmentType", "Choose Test, Assignment or Exam.");
-
-        if (!ModelState.IsValid)
-        {
-            await LoadAsync();
-            return Page();
-        }
-
-        var assessment = new Assessment
-        {
-            Id = Guid.NewGuid(),
-            Title = Input.Title.Trim(),
-            AssessmentType = Input.AssessmentType,
-            SubjectId = subjectId,
-            Grade = grade,
-            TeacherId = teacherId!.Value,
-            DateOfAssessment = Input.DateOfAssessment,
-            Total = Input.Total
-        };
-        _db.Assessments.Add(assessment);
-        await _db.SaveChangesAsync();
-
-        return RedirectToPage("/Marks/Capture", new { id = assessment.Id });
     }
 
     private async Task LoadAsync()
@@ -141,15 +56,6 @@ public class IndexModel : PageModel
 
         var scope = await _db.GetScopeAsync(User);
         var subjectNames = Subjects.ToDictionary(s => s.Id, s => s.Name);
-
-        // NEW — populates the dropdown from the teacher's real assignments.
-        MyClasses = scope.Assignments
-            .OrderBy(a => subjectNames.GetValueOrDefault(a.SubjectId, ""))
-            .ThenBy(a => SchoolRules.GradeOrder(a.Grade))
-            .Select(a => new ClassOption(
-                $"{a.SubjectId}|{a.Grade}",
-                $"{subjectNames.GetValueOrDefault(a.SubjectId, "Unknown subject")} — Grade {a.Grade}"))
-            .ToList();
 
         // A teacher only ever sees assessments they created; only admins see everyone's.
         var query = _db.Assessments.AsQueryable();
