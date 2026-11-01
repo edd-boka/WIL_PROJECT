@@ -54,6 +54,22 @@
                 </div>
             </div>
 
+            @if (User.IsInRole("admin"))
+            {
+                <div class="mb-3">
+                    <label asp-for="Input.TeacherId" class="form-label">Assign teacher</label>
+                    <select asp-for="Input.TeacherId" class="form-select" id="teacher-select" required>
+                        <option value="">-- choose a teacher for this grade --</option>
+                        @foreach (var teacher in Model.TeacherOptions)
+                        {
+                            <option value="@teacher.Id" data-grade="@teacher.Grade">@teacher.Name (Grade @teacher.Grade)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Input.TeacherId" class="text-danger small"></span>
+                    <div class="form-text">Only teachers assigned to the selected grade are available.</div>
+                </div>
+            }
+
             <div class="mb-3">
                 <label class="form-label">Parent / guardian email</label>
                 <input asp-for="Input.ParentEmail" type="email" class="form-control" autocomplete="off" required />
@@ -61,6 +77,34 @@
                     The parent signs in to the parent app with this email and is linked to this learner straight away.
                     A parent with more than one child at school: use the same email for each child.
                 </div>
+
+                @if (User.IsInRole("admin"))
+                {
+                    @section Scripts {
+                        <script>
+                            const gradeSelect = document.querySelector('[name="Input.Grade"]');
+                            const teacherSelect = document.getElementById('teacher-select');
+                            const selectedTeacher = '@Model.Input.TeacherId';
+
+                            function filterTeachers() {
+                                const grade = gradeSelect.value;
+                                for (const option of teacherSelect.options) {
+                                    if (!option.value) continue;
+                                    option.hidden = option.dataset.grade !== grade;
+                                    option.disabled = option.hidden;
+                                }
+                                if (teacherSelect.selectedOptions.length &&
+                                    (teacherSelect.selectedOptions[0].dataset.grade !== grade)) {
+                                    teacherSelect.value = '';
+                                }
+                            }
+
+                            if (selectedTeacher) teacherSelect.value = selectedTeacher;
+                            gradeSelect.addEventListener('change', filterTeachers);
+                            filterTeachers();
+                        </script>
+                    }
+                }
             </div>
 
             <div class="mb-3">
