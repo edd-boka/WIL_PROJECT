@@ -13,8 +13,16 @@ public class IndexModel : PageModel
     private readonly AppDbContext _db;
     public IndexModel(AppDbContext db) => _db = db;
 
+    [BindProperty] public string? NewTitle { get; set; }
+    [BindProperty] public string? NewAssessmentType { get; set; }
+    [BindProperty] public string? NewClass { get; set; }
+    [BindProperty] public DateOnly NewDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [BindProperty] public double NewTotal { get; set; }
+
     public List<AssessmentRow> Items { get; set; } = new();
     public List<Subject> Subjects { get; set; } = new();
+    public List<CreateClassOption> CreateClassOptions { get; set; } = new();
+    public bool CanCreateAssessment { get; set; }
 
     // ?grade=5&subjectId=...&q=fractions  (all optional, so the page is bookmarkable)
     [BindProperty(SupportsGet = true)] public string? Grade { get; set; }
@@ -23,6 +31,7 @@ public class IndexModel : PageModel
 
     public record GradeCard(string Grade, int Count);
     public record SubjectChip(Guid Id, string Name, int Count);
+    public record CreateClassOption(string Value, string Label);
 
     public List<GradeCard> GradeCards { get; set; } = new();
     public List<SubjectChip> SubjectChips { get; set; } = new();
@@ -48,6 +57,59 @@ public class IndexModel : PageModel
     public async Task OnGetAsync()
     {
         await LoadAsync();
+        NewClass = CreateClassOptions.FirstOrDefault()?.Value;
+    }
+
+    public async Task<IActionResult> OnPostCreateAsync()
+    {
+        var scope = await _db.GetScopeAsync(User);
+        await LoadAsync();
+
+        if (scope.TeacherId is null)
+            ModelState.AddModelError(string.Empty, "This account has no teacher profile.");
+
+        var title = (NewTitle ?? string.Empty).Trim();
+        if (title.Length == 0)
+            ModelState.AddModelError(nameof(NewTitle), "Enter an assessment title.");
+        if (!AssessmentExtensions.AssessmentTypes.Contains(NewAssessmentType ?? string.Empty))
+            ModelState.AddModelError(nameof(NewAssessmentType), "Choose Test, Assignment or Exam.");
+        if (!double.IsFinite(NewTotal) || NewTotal <= 0)
+            ModelState.AddModelError(nameof(NewTotal), "The total must be greater than zero.");
+
+        var classOption = CreateClassOptions.FirstOrDefault(option => option.Value == NewClass);
+        if (classOption is null)
+        {
+            ModelState.AddModelError(nameof(NewClass), "Choose a subject and grade you teach.");
+        }
+
+        if (!ModelState.IsValid)
+            return Page();
+
+        var parts = classOption!.Value.Split('|');
+        if (parts.Length != 2 || !Guid.TryParse(parts[0], out var subjectId) ||
+            scope.TeacherId is not Guid teacherId)
+        {
+            ModelState.AddModelError(nameof(NewClass), "Choose a valid subject and grade.");
+            return Page();
+        }
+
+        var assessment = new Assessment
+        {
+            Id = Guid.NewGuid(),
+            Title = title,
+            AssessmentType = NewAssessmentType!,
+            SubjectId = subjectId,
+            Grade = parts[1],
+            TeacherId = teacherId,
+            DateOfAssessment = NewDate,
+            Total = NewTotal
+        };
+
+        _db.Assessments.Add(assessment);
+        await _db.SaveChangesAsync();
+
+        TempData["Message"] = "Assessment created. You can now capture marks for the class.";
+        return RedirectToPage("/Assessments/Index1");
     }
 
     private async Task LoadAsync()
@@ -55,7 +117,24 @@ public class IndexModel : PageModel
         Subjects = await _db.Subjects.OrderBy(s => s.Name).ToListAsync();
 
         var scope = await _db.GetScopeAsync(User);
+        CanCreateAssessment = scope.TeacherId is not null;
         var subjectNames = Subjects.ToDictionary(s => s.Id, s => s.Name);
+        var availableClasses = scope.IsAdmin
+            ? (from subject in Subjects
+               from grade in SchoolRules.Grades
+               where SchoolRules.SubjectFitsGrade(subject.Phase, grade)
+               select (subject.Id, Grade: grade))
+            : scope.Assignments.Select(assignment => (Id: assignment.SubjectId, Grade: assignment.Grade));
+        CreateClassOptions = availableClasses
+            .Distinct()
+            .Where(item => subjectNames.ContainsKey(item.Id))
+            .OrderBy(item => SchoolRules.GradeOrder(item.Grade))
+            .ThenBy(item => subjectNames[item.Id])
+            .Select(item => new CreateClassOption(
+                $"{item.Id}|{item.Grade}",
+                $"Grade {item.Grade} — {subjectNames[item.Id]}"))
+            .ToList();
+
 
         // A teacher only ever sees assessments they created; only admins see everyone's.
         var query = _db.Assessments.AsQueryable();
