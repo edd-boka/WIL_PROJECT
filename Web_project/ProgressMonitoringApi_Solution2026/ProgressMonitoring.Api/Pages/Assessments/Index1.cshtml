@@ -29,6 +29,11 @@
     }
 </div>
 
+@if (TempData["Message"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
 @if (!ModelState.IsValid)
 {
 <div class="alert alert-danger">
@@ -42,7 +47,64 @@
 }
 
 <div class="row g-4">
-    <div class="col-12">
+    <aside class="col-12 col-xl-3">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Create assessment</h5>
+            </div>
+            <div class="card-body">
+                @if (!Model.CanCreateAssessment)
+                {
+                    <p class="text-muted mb-0">This account has no teacher profile, so it cannot create assessments.</p>
+                }
+                else if (!Model.CreateClassOptions.Any())
+                {
+                    <p class="text-muted">No classes are assigned yet. Choose the grades and subjects you teach under My Classes first.</p>
+                    <a class="btn btn-outline-primary btn-sm" asp-page="/Teaching/Index">Go to My Classes</a>
+                }
+                else
+                {
+                    <form method="post" asp-page-handler="Create">
+                        <div class="mb-3">
+                            <label asp-for="NewTitle" class="form-label">Assessment title</label>
+                            <input asp-for="NewTitle" class="form-control" maxlength="200" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewAssessmentType" class="form-label">Type</label>
+                            <select asp-for="NewAssessmentType" class="form-select" required>
+                                <option value="">Choose a type</option>
+                                @foreach (var type in AssessmentExtensions.AssessmentTypes)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewClass" class="form-label">Class</label>
+                            <select asp-for="NewClass" class="form-select" required>
+                                <option value="">Choose a subject and grade</option>
+                                @foreach (var option in Model.CreateClassOptions)
+                                {
+                                    <option value="@option.Value">@option.Label</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewDate" class="form-label">Assessment date</label>
+                            <input asp-for="NewDate" type="date" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewTotal" class="form-label">Total marks</label>
+                            <input asp-for="NewTotal" type="number" min="0.01" step="any" class="form-control" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create assessment</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </aside>
+
+    <div class="col-12 col-xl-9">
 
         @* ---------- Search (subject and/or title) ---------- *@
         <form method="get" class="mb-3">
